@@ -71,12 +71,12 @@ class Moto{
      //DAR PRECIO VENTA
      public function darPrecioVenta (){
         $anioActual = date("Y");
+        $precioVenta = -1;
         $anios = $anioActual - $this->getAnioFabricacion();
         if ($this->getDisponibilidad()){
-        $precioVenta = $this->getCostoMoto() + $this->getCostoMoto() * ($anios * ($this->getPorcentajeIncrementoAnual() / 100 ));
-        } else {
-            $precioVenta = -1;
-        }
+            $precioVenta = $this->getCostoMoto() + $this->getCostoMoto() * ($anios * ($this->getPorcentajeIncrementoAnual() / 100 ));
+        } 
+        
         return $precioVenta;
      }
 

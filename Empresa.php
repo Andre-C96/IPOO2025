@@ -1,7 +1,4 @@
 <?php
-include_once "Cliente.php";
-include_once "Moto.php";
-include_once "Venta.php";
 
 class Empresa{
     private $denominacion;
@@ -70,16 +67,16 @@ class Empresa{
         $this->colecVentas = $colecVentas;
     }
 
+    //RETORNAR MOTO 
     public function retornarMoto($codigoMoto) {
         $coleccion = $this->getColecMotos();
-        $motoEncontrada = -1;
-        $encontrada = false;
+        $motoEncontrada = null;
         $i = 0;
     
-        while ($i < count($coleccion) && !$encontrada) {
+        while ($i < count($coleccion) && $motoEncontrada == null) {
             if ($coleccion[$i]->getCodigoMoto() == $codigoMoto) {
                 $motoEncontrada = $coleccion[$i]; 
-                $encontrada = true;
+        
             }
             $i++;
         }
@@ -94,33 +91,27 @@ class Empresa{
         if ($objCliente->getEstado()) {
             $coleccionMotosVenta = [];
             $precioTotal = 0;
-            $i = 0;
     
-            while ($i < count($colCodigosMoto)) {
-                $codigo = $colCodigosMoto[$i];
+            foreach ($colCodigosMoto as $codigo) {
                 $moto = $this->retornarMoto($codigo);
     
-                if (is_object($moto)) {
-                    if ($moto->getDisponibilidad()) {
-                        $precio = $moto->darPrecioVenta();
-                        if (is_numeric($precio) && $precio > 0) {
-                            $coleccionMotosVenta[] = $moto;
-                            $precioTotal += $precio;
-                            $moto->setDisponibilidad(false);
-                        }
-                    }
+                if ($moto !== null && $moto->getDisponibilidad()) {
+                    $precio = $moto->darPrecioVenta();
+                    $coleccionMotosVenta[] = $moto;
+                    $precioTotal += $precio;
+                    $moto->setDisponibilidad(false);
                 }
-                $i++;
+                
             }
     
             if (count($coleccionMotosVenta) > 0) {
                 $numeroVenta = count($this->getColecVentas()) + 1;
                 $fechaHoy = date("d/m/Y");
-    
-                $venta = new Venta($numeroVenta, $fechaHoy, $objCliente, $coleccionMotosVenta, $precioTotal);
-                $ventas = $this->getColecVentas();
-                $ventas[] = $venta;
-                $this->setColecVentas($ventas);
+                $objVenta = null;
+                $objVenta = new Venta($numeroVenta, $fechaHoy, $objCliente, $coleccionMotosVenta, $precioTotal);
+                $Colecventas = $this->getColecVentas();
+                $Colecventas[] = $objVenta;
+                $this->setColecVentas($Colecventas);
                 $importeFinal = $precioTotal;
             }
         }
@@ -129,19 +120,17 @@ class Empresa{
     }
 
     //RETORNAR VENTAS POR CLIENTE
-    public function retornarVentasXCliente($tipo, $numDoc) {
+    public function retornarVentasXCliente($tipoDoc, $numDoc) {
         $ventasCliente = [];
-        $i = 0;
-        $coleccion = $this->getColecVentas();
+        $coleccionVenta = $this->getColecVentas();
     
-        while ($i < count($coleccion)) {
-            $venta = $coleccion[$i];
+        foreach ($coleccionVenta as $venta) {
             $cliente = $venta->getRefCliente();
     
-            if ($cliente->getTipoDoc() == $tipo && $cliente->getNumDoc() == $numDoc) {
+            if ($cliente->getTipoDoc() == $tipoDoc && $cliente->getNumDoc() == $numDoc) {
                 $ventasCliente[] = $venta;
             }
-            $i++;
+            
         }
     
         return $ventasCliente;

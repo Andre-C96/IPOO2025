@@ -1,6 +1,5 @@
 <?php
-include_once "Moto.php";
-include_once "Cliente.php";
+
 class Venta{
     private $numeroVenta;
     private $fecha;
